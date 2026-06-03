@@ -1,0 +1,19 @@
+{
+  "buildCommand": "expo export --platform web",
+  "outputDirectory": "dist",
+  "framework": null,
+  "cleanUrls": true,
+  "redirects": [
+    {
+      "source": "/(.*)",
+      "destination": "https://africaexcellenceawards.org/networking",
+      "permanent": false
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/((?!_expo|assets|favicon|.*\\..*).*)",
+      "destination": "/index.html"
+    }
+  ]
+}
