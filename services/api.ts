@@ -111,6 +111,97 @@ export type CitySuggestion = {
   lon?: number;
 };
 
+// ── LMS (formations) ─────────────────────────────────────────────────────────
+
+export type LmsQuestionType = "quiz" | "multi-quiz" | "open";
+export type LmsReviewStatus = "pending" | "approved" | "needs_revision";
+
+export type LmsLessonSummary = {
+  id: string;
+  title: string;
+  order_index: number;
+  question_count: number;
+  is_completed: boolean;
+  best_percentage: number | null;
+};
+
+export type LmsPathSummary = {
+  id: string;
+  title: string;
+  description: string | null;
+  order_index: number;
+  lessons: LmsLessonSummary[];
+};
+
+export type LmsQuestSummary = {
+  id: string;
+  title: string;
+  description: string | null;
+  image: string | null;
+  order_index: number;
+  paths: LmsPathSummary[];
+};
+
+export type LmsOption = { id: string; text: string; order_index: number };
+
+export type LmsMyAnswer = {
+  selected_option_id: string | null;
+  selected_option_ids: string[] | null;
+  open_answer: string | null;
+  is_correct: boolean | null;
+  review_status: LmsReviewStatus;
+  mentor_comment: string | null;
+  reviewed_at: string | null;
+};
+
+export type LmsQuestion = {
+  id: string;
+  text: string;
+  type: LmsQuestionType;
+  order_index: number;
+  options: LmsOption[];
+  my_answer: LmsMyAnswer | null;
+};
+
+export type LmsLessonDetail = {
+  lesson: { id: string; path_id: string; title: string; content: string | null };
+  questions: LmsQuestion[];
+  is_completed: boolean;
+};
+
+export type LmsSubmitAnswer = {
+  question_id: string;
+  selected_option_id?: string | null;
+  selected_option_ids?: string[] | null;
+  open_answer?: string | null;
+};
+
+export type LmsSubmitResult = {
+  score: { correct_count: number; total_questions: number; percentage: number; passed: boolean } | null;
+  results: { question_id: string; type: LmsQuestionType; is_correct: boolean | null; correct_option_ids: string[] }[];
+  pending_review: number;
+  is_completed: boolean;
+};
+
+export type LmsMenteeSummary = {
+  inscription_id: string;
+  full_name: string;
+  email: string | null;
+  completed_lessons: number;
+  pending_reviews: number;
+};
+
+export type LmsMenteeAnswer = {
+  id: string;
+  question_text: string;
+  lesson_title: string;
+  open_answer: string | null;
+  review_status: LmsReviewStatus;
+  mentor_comment: string | null;
+  reviewed_at: string | null;
+  created_at: string;
+};
+
 // ── Low-level invoke ─────────────────────────────────────────────────────────
 
 function buildUrl(functionName: string, params?: Record<string, string>): string {
@@ -302,4 +393,32 @@ export const API = {
       return [];
     }
   },
+
+  // ── LMS (formations) ────────────────────────────────────────────────────────
+  lmsCatalog: () => invoke<{ quests: LmsQuestSummary[] }>("app-lms-catalog"),
+
+  lmsLesson: (lessonId: string) =>
+    invoke<LmsLessonDetail>("app-lms-lesson", undefined, { lesson_id: lessonId }),
+
+  lmsSubmit: (lessonId: string, answers: LmsSubmitAnswer[]) =>
+    invoke<LmsSubmitResult>("app-lms-answer-submit", { lesson_id: lessonId, answers }),
+
+  lmsComplete: (lessonId: string) =>
+    invoke<{ ok: true; is_completed: boolean }>("app-lms-complete", { lesson_id: lessonId }),
+
+  // Mentor side.
+  lmsMentees: () => invoke<{ mentees: LmsMenteeSummary[] }>("app-lms-mentees"),
+
+  lmsMenteeAnswers: (menteeInscriptionId: string) =>
+    invoke<{ mentee: { inscription_id: string; full_name: string }; answers: LmsMenteeAnswer[] }>(
+      "app-lms-mentee-answers",
+      undefined,
+      { mentee_inscription_id: menteeInscriptionId },
+    ),
+
+  lmsReviewAnswer: (answerId: string, reviewStatus: LmsReviewStatus, mentorComment?: string) =>
+    invoke<{ ok: true; answer_id: string; review_status: LmsReviewStatus; mentor_comment: string | null }>(
+      "app-lms-answer-review",
+      { answer_id: answerId, review_status: reviewStatus, mentor_comment: mentorComment ?? "" },
+    ),
 };

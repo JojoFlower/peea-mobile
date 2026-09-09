@@ -51,6 +51,9 @@ function RootNav() {
       <Stack.Screen name="(tabs)" />
       <Stack.Screen name="profile-detail" options={{ presentation: "card" }} />
       <Stack.Screen name="profile-edit" options={{ presentation: "card" }} />
+      <Stack.Screen name="lesson" options={{ presentation: "card" }} />
+      <Stack.Screen name="mentees-lms" options={{ presentation: "card" }} />
+      <Stack.Screen name="mentee-review" options={{ presentation: "card" }} />
     </Stack>
   );
 
