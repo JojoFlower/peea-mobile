@@ -17,10 +17,10 @@ export default function WelcomeScreen() {
         </View>
         <Text className="text-[23px] font-poppins-bold mb-2.5 tracking-tight text-fg">Bienvenue {params.firstName} !</Text>
         <Text className="text-sm text-fg-muted leading-[22px] text-center mb-[30px]">
-          Ton compte PEEA est créé. Découvre les actualités et toutes les ressources de la communauté.
+          Ton compte PEEA est créé. Rejoins le programme de mentorat et connecte-toi à la communauté.
         </Text>
         <View className="w-full">
-          <PrimaryButton title="Découvrir les actualités" onPress={() => router.replace("/(tabs)")} />
+          <PrimaryButton title="Découvrir le mentorat" onPress={() => router.replace("/(tabs)")} />
         </View>
       </View>
     </SafeAreaView>

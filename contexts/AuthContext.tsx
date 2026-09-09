@@ -33,9 +33,6 @@ type AuthContextType = {
   register: (input: RegisterInput) => Promise<RegisterResult>;
   upsertMentorship: (input: MentorshipInput) => Promise<void>;
   updateProfile: (input: ProfileUpdateInput) => Promise<void>;
-  respondToRequest: (menteeInscriptionId: string, action: "accept" | "decline") => Promise<void>;
-  leaveMentor: () => Promise<void>;
-  removeMentee: (menteeInscriptionId: string) => Promise<void>;
   refresh: () => Promise<void>;
   logout: () => Promise<void>;
 };
@@ -168,53 +165,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  // A mentor accepts or declines a mentorship request. On accept the binôme is
-  // formed and "me" is refreshed (both parties' contact details unlock).
-  const respondToRequest = useCallback(
-    async (menteeInscriptionId: string, action: "accept" | "decline") => {
-      setLoading(true);
-      setError(null);
-      try {
-        const updated = await API.respondToRequest(menteeInscriptionId, action);
-        setMe(updated);
-      } catch (e: any) {
-        setError(e?.message ?? "Échec de la réponse à la demande");
-        throw e;
-      } finally {
-        setLoading(false);
-      }
-    },
-    [],
-  );
-
-  // A mentee leaves their assigned mentor (stays a mentee, returns to the deck).
-  const leaveMentor = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      setMe(await API.leaveMentor());
-    } catch (e: any) {
-      setError(e?.message ?? "Impossible de quitter ce mentor.");
-      throw e;
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  // A mentor removes one specific mentee from their binôme.
-  const removeMentee = useCallback(async (menteeInscriptionId: string) => {
-    setLoading(true);
-    setError(null);
-    try {
-      setMe(await API.removeMentee(menteeInscriptionId));
-    } catch (e: any) {
-      setError(e?.message ?? "Impossible de retirer ce·tte mentoré·e.");
-      throw e;
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
   const refresh = useCallback(async () => {
     try {
       const session = await API.getSession();
@@ -252,9 +202,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         register,
         upsertMentorship,
         updateProfile,
-        respondToRequest,
-        leaveMentor,
-        removeMentee,
         refresh,
         logout,
       }}

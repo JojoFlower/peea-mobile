@@ -73,7 +73,7 @@ export default function ProfilScreen() {
       : [mentorship?.mentee_level, mentorship?.mentee_institution_name].filter(Boolean).join(" · ")
     : `Membre PEEA · ${user.city ?? ""}`;
 
-  const goMentorat = () => router.navigate("/(tabs)/mentorat");
+  const goMentorat = () => router.navigate("/(tabs)");
   const goEditProfile = () => router.navigate("/profile-edit");
 
   return (

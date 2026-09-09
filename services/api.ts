@@ -111,25 +111,6 @@ export type CitySuggestion = {
   lon?: number;
 };
 
-export type FeedPost = {
-  id: string;
-  type: string;
-  author: string;
-  handle: string;
-  initials: string;
-  avatar_bg: string;
-  time: string;
-  title: string;
-  body: string;
-  tag: string;
-  tag_color: string;
-  event_date: string | null;
-  event_month: string | null;
-  event_year: string | null;
-  event_place: string | null;
-  event_time: string | null;
-};
-
 // ── Low-level invoke ─────────────────────────────────────────────────────────
 
 function buildUrl(functionName: string, params?: Record<string, string>): string {
@@ -307,55 +288,6 @@ export const API = {
   // editable here (it's the login identifier). Returns the refreshed "me".
   updateProfile: (input: ProfileUpdateInput) =>
     invoke<MeResponse>("app-profile-update", input),
-
-  listFeed: () => invoke<FeedPost[]>("app-feed"),
-
-  // Mentee-only deck of mentors to swipe through (current edition, not already
-  // requested, not full). Contact details are gated until a binôme is formed.
-  // Passes aren't recorded, so the deck returns every still-available mentor and
-  // the client loops through them.
-  listMentorDeck: () => invoke<PersonContact[]>("app-mentor-deck"),
-
-  // Mentee requests a mentor (a right-swipe / "Demander"): sends a mentorship
-  // request the mentor can accept/decline. Passes are not recorded. Idempotent
-  // on the (mentee, mentor) pair.
-  requestMentor: (mentorInscriptionId: string) =>
-    invoke<{ ok: true }>("app-swipe", {
-      mentor_inscription_id: mentorInscriptionId,
-    }),
-
-  // Mentor-only list of pending mentorship requests (mentees who liked them).
-  // Contact details are gated until the mentor accepts.
-  listMentorRequests: () => invoke<PersonContact[]>("app-mentor-requests"),
-
-  // Mentee-only list of pending requests they've SENT (mentors awaiting a reply).
-  // Lets the deck show "en attente de réponse" instead of acting blind. Contact
-  // details are gated until a binôme is formed.
-  listMenteeRequests: () => invoke<PersonContact[]>("app-mentee-requests"),
-
-  // Mentee leaves their assigned mentor (stays a mentee, back to the deck).
-  // Returns the refreshed "me".
-  // Pass an (empty) body so invoke() issues a POST — the function rejects GET
-  // with 405.
-  leaveMentor: () => invoke<MeResponse>("app-mentorship-leave", {}),
-
-  // Mentor removes one specific mentee from their binôme (frees that mentee back
-  // to the deck without dissolving the rest). Returns the refreshed "me".
-  removeMentee: (menteeInscriptionId: string) =>
-    invoke<MeResponse>("app-mentee-remove", { mentee_inscription_id: menteeInscriptionId }),
-
-  // Mentee cancels a pending request they sent (the mentor becomes swipeable again).
-  cancelRequest: (mentorInscriptionId: string) =>
-    invoke<{ ok: true }>("app-request-cancel", { mentor_inscription_id: mentorInscriptionId }),
-
-  // Mentor accepts or declines a request. On accept the binôme is formed and the
-  // refreshed "me" is returned (contacts unlock for both). Throws "already_taken"
-  // if the mentee was matched elsewhere first, or "capacity_reached" at 3 mentees.
-  respondToRequest: (menteeInscriptionId: string, action: "accept" | "decline") =>
-    invoke<MeResponse>("app-request-respond", {
-      mentee_inscription_id: menteeInscriptionId,
-      action,
-    }),
 
   // City autocomplete backed by the shared geocode-cities edge function
   // (Geoapify). Returns [] on any error so the form stays usable.

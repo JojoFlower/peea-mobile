@@ -3,7 +3,7 @@ import "react-native-url-polyfill/auto";
 import React, { useEffect } from "react";
 import { Stack, useRouter, useSegments, useRootNavigationState } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { View, Platform, Text, TextInput, Linking } from "react-native";
+import { View, Platform, Text, TextInput } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
@@ -28,9 +28,6 @@ InputAny.defaultProps = InputAny.defaultProps ?? {};
 InputAny.defaultProps.style = [{ fontFamily: "Poppins_400Regular" }, InputAny.defaultProps.style];
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
-
-// Redirect the entire app to the external networking site.
-const REDIRECT_URL = "https://africaexcellenceawards.org/networking";
 
 function RootNav() {
   const { isAuthenticated, initializing } = useAuth();
@@ -78,29 +75,11 @@ export default function RootLayout() {
     Poppins_700Bold,
   });
 
-  // Send every visitor to the external networking site instead of the app.
-  useEffect(() => {
-    if (Platform.OS === "web") {
-      if (typeof window !== "undefined") {
-        window.location.replace(REDIRECT_URL);
-      }
-    } else {
-      Linking.openURL(REDIRECT_URL).catch(() => {});
-    }
-  }, []);
-
   useEffect(() => {
     if (fontsLoaded || fontError) {
       SplashScreen.hideAsync().catch(() => {});
     }
   }, [fontsLoaded, fontError]);
-
-  // Don't render the app UI; the redirect above takes over immediately.
-  // Set this to false to restore the original app below.
-  const REDIRECT_ENABLED = true;
-  if (REDIRECT_ENABLED) {
-    return null;
-  }
 
   // Hold the splash screen until fonts are ready (or failed) to avoid a flash
   // of the fallback system font.

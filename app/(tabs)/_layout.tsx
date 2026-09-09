@@ -24,13 +24,6 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: "Actus",
-          tabBarIcon: ({ color, size }) => <Ionicons name="newspaper-outline" size={size} color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="mentorat"
-        options={{
           title: "Mentorat",
           tabBarIcon: ({ color, size }) => <Ionicons name="school-outline" size={size} color={color} />,
         }}

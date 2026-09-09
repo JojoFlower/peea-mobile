@@ -448,10 +448,6 @@ export const HEARD_ABOUT_US_OPTIONS: string[] = [
 // edition actually written to inscriptions / mentorship_profiles.
 export const EDITION = String(new Date().getUTCFullYear());
 
-// Maximum number of mentees a single mentor can take on per edition. Enforced
-// client-side as a guard; the backend remains the source of truth.
-export const MAX_MENTEES = 3;
-
 // Accent colour per study/mentor field — presentation only, derived from field.
 const FIELD_COLORS: Record<string, string> = {
   "Informatique et génie logiciel": "#3B82F6",
