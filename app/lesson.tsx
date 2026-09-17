@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { View, Text, ScrollView, Pressable, ActivityIndicator, TextInput } from "react-native";
+import { View, Text, ScrollView, Pressable, ActivityIndicator, TextInput, Platform } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { WebView } from "react-native-webview";
-import { usePreventScreenCapture } from "expo-screen-capture";
+import * as ScreenCapture from "expo-screen-capture";
 import { Ionicons } from "@expo/vector-icons";
 import { colors } from "@/lib/theme";
 import { BackHeader } from "@/components/headers";
@@ -82,8 +82,15 @@ function SecureReader({ content }: { content: string | null }) {
 
 export default function LessonScreen() {
   // Block screenshots / screen recording while a lesson is open (FLAG_SECURE on
-  // Android; best-effort on iOS, where the OS does not allow full blocking).
-  usePreventScreenCapture();
+  // Android; best-effort on iOS). No-op on web: the API is native-only, so calling
+  // it there throws — guard by platform.
+  useEffect(() => {
+    if (Platform.OS === "web") return;
+    ScreenCapture.preventScreenCaptureAsync().catch(() => {});
+    return () => {
+      ScreenCapture.allowScreenCaptureAsync().catch(() => {});
+    };
+  }, []);
 
   const router = useRouter();
   const { lessonId } = useLocalSearchParams<{ lessonId: string }>();
@@ -99,6 +106,12 @@ export default function LessonScreen() {
 
   const load = useCallback(async () => {
     if (!lessonId) return;
+    // Le contenu des leçons n'est pas servi au navigateur (protection) : sur le
+    // web on n'appelle pas l'API et on affiche une invitation à ouvrir l'app.
+    if (Platform.OS === "web") {
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     setError(null);
     try {
@@ -184,6 +197,26 @@ export default function LessonScreen() {
       setCompleting(false);
     }
   };
+
+  // Sur le web, on ne rend jamais le contenu d'une leçon : il ne peut pas être
+  // protégé dans un navigateur (inspecteur, onglet réseau). La lecture se fait
+  // dans l'application mobile (WebView anti-copie + FLAG_SECURE).
+  if (Platform.OS === "web") {
+    return (
+      <SafeAreaView className="flex-1 bg-bg" edges={["top"]}>
+        <BackHeader onBack={() => router.back()} title="Leçon" />
+        <View className="flex-1 items-center justify-center px-10">
+          <Ionicons name="phone-portrait-outline" size={44} color={colors.fgSoft} />
+          <Text className="text-fg font-poppins-semibold text-base text-center mt-4">
+            Leçon disponible dans l'application
+          </Text>
+          <Text className="text-fg-muted text-sm text-center mt-2 leading-[20px]">
+            Pour protéger le contenu, les leçons se consultent uniquement dans l'application mobile PEEA.
+          </Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView className="flex-1 bg-bg" edges={["top"]}>
