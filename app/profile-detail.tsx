@@ -1,4 +1,5 @@
 import { View, Text, ScrollView } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { colors, initialsOf } from "@/lib/theme";
 import { fieldColor, EDITION } from "@/lib/formOptions";
@@ -14,6 +15,7 @@ import { PersonContact } from "@/services/api";
 // they're gated server-side until a binôme is formed.
 export default function ProfileDetailScreen() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const params = useLocalSearchParams<{ person: string }>();
 
   let p: PersonContact | null = null;
@@ -25,9 +27,11 @@ export default function ProfileDetailScreen() {
 
   if (!p) {
     return (
-      <View className="flex-1 bg-bg items-center justify-center px-8">
+      <View className="flex-1 bg-bg" style={{ paddingTop: insets.top }}>
         <BackHeader onBack={() => router.back()} />
-        <Text className="text-fg-muted text-sm">Profil introuvable.</Text>
+        <View className="flex-1 items-center justify-center px-8">
+          <Text className="text-fg-muted text-sm">Profil introuvable.</Text>
+        </View>
       </View>
     );
   }
@@ -41,7 +45,7 @@ export default function ProfileDetailScreen() {
   return (
     <View className="flex-1 bg-bg">
       {/* header banner */}
-      <View style={{ backgroundColor: accent }} className="pb-7">
+      <View style={{ backgroundColor: accent, paddingTop: insets.top }} className="pb-7">
         <BackHeader onBack={() => router.back()} />
         <View className="items-center px-[22px] pt-1">
           <Avatar initials={initials} bg="rgba(255,255,255,0.45)" size={84} radius={26} />
