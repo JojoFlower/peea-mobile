@@ -53,7 +53,7 @@ export default function RegisterScreen() {
       <ScrollView contentContainerClassName="p-6 pt-1" keyboardShouldPersistTaps="handled">
         <Text className="text-2xl font-poppins-bold mb-1.5 tracking-tight text-fg">Crée ton compte</Text>
         <Text className="text-sm text-fg-muted leading-5 mb-5">
-          Bienvenue dans la communauté PEEA ! Ces informations constituent ton inscription. Tu pourras rejoindre
+          Bienvenue dans la communauté PEEA ! Ces informations constituent ton compte. Tu pourras rejoindre
           le programme de mentorat juste après.
         </Text>
 

@@ -442,11 +442,11 @@ export const HEARD_ABOUT_US_OPTIONS: string[] = [
   "Autre",
 ];
 
-// Current edition label (display only). Mirrors the backend's currentEdition()
-// = the current calendar year, so the UI stays in sync with the edition a user
-// is rolled into on login. The backend remains the source of truth for the
-// edition actually written to inscriptions / mentorship_profiles.
-export const EDITION = String(new Date().getUTCFullYear());
+// Active edition label (display only). Mirrors the backend's currentEdition()
+// (ACTIVE_EDITION, default "2027") and the web src/lib/edition.ts — bump it each
+// new edition. Not clock-derived: the edition is configured, not the system year.
+// The backend stays the source of truth for what is written to the DB.
+export const EDITION = "2027";
 
 // Accent colour per study/mentor field — presentation only, derived from field.
 const FIELD_COLORS: Record<string, string> = {
