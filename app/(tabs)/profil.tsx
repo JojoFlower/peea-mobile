@@ -93,7 +93,7 @@ export default function ProfilScreen() {
               </>
             ) : (
               <Tag bg={colors.bg} color={colors.fgMuted} className="py-1.5 px-3">
-                Inscription confirmée
+                Compte confirmé
               </Tag>
             )}
           </View>
@@ -132,7 +132,7 @@ export default function ProfilScreen() {
 
         {/* coordonnées */}
         <View className="px-[22px] pb-4">
-          <SectionEyebrow>Coordonnées (inscription)</SectionEyebrow>
+          <SectionEyebrow>Coordonnées (compte)</SectionEyebrow>
           <Row icon="mail" label="Email" value={user.email} />
           <Row icon="phone" label="Téléphone" value={user.phone} />
           <Row icon="map-pin" label="Ville" value={user.city} />

@@ -350,7 +350,7 @@ export default function MentoratScreen() {
                 <>
                   <View className="gap-2.5">
                     {myMentees.map((m) => (
-                      <PersonRow key={m.inscription_id} p={m} onPress={() => openProfile(m)} />
+                      <PersonRow key={m.user_id} p={m} onPress={() => openProfile(m)} />
                     ))}
                   </View>
                   <Text className="text-xs text-fg-soft text-center mt-4 leading-[18px] px-2">

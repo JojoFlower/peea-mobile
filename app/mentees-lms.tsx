@@ -69,11 +69,11 @@ export default function MenteesLmsScreen() {
               const initials = initialsOf(parts[0], parts.length > 1 ? parts[parts.length - 1] : "");
               return (
               <Card
-                key={m.inscription_id}
+                key={m.user_id}
                 onPress={() =>
                   router.push({
                     pathname: "/mentee-review",
-                    params: { menteeId: m.inscription_id, name: m.full_name },
+                    params: { menteeId: m.user_id, name: m.full_name },
                   })
                 }
                 className="mb-3 flex-row items-center gap-3"

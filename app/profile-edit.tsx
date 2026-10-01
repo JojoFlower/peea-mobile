@@ -11,7 +11,7 @@ import { PhoneField } from "@/components/PhoneField";
 import { CityField } from "@/components/CityField";
 import { Icon } from "@/components/Icon";
 
-// Edit the current user's inscription details (name, phone, city). Email is shown
+// Edit the current user's account details (name, phone, city). Email is shown
 // read-only — it's the login identifier and can't be changed here.
 export default function ProfileEditScreen() {
   const router = useRouter();
@@ -47,7 +47,7 @@ export default function ProfileEditScreen() {
       <BackHeader onBack={() => router.back()} title="Modifier mes informations" />
       <ScrollView contentContainerClassName="p-6 pt-1" keyboardShouldPersistTaps="handled">
         <Text className="text-sm text-fg-muted leading-5 mb-5">
-          Mets à jour tes coordonnées d'inscription. Ton email de connexion ne peut pas être modifié
+          Mets à jour tes coordonnées. Ton email de connexion ne peut pas être modifié
           ici.
         </Text>
 

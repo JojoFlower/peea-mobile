@@ -116,8 +116,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return result;
   }, []);
 
-  // Sign up = create the inscription only. No session is opened here; the user
-  // logs in afterwards on their own via the normal passwordless login flow.
+  // Sign up = create the account (users row) only — no event inscription, no
+  // session. The user logs in afterwards via the normal passwordless login flow.
   const register = useCallback(async (input: RegisterInput): Promise<RegisterResult> => {
     setLoading(true);
     setError(null);
@@ -126,8 +126,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!result.ok) {
       const msg =
         result.error === "already_registered"
-          ? "Cet email (ou ce téléphone) est déjà inscrit. Connecte-toi plutôt."
-          : result.message || "Inscription échouée.";
+          ? "Cet email a déjà un compte. Connecte-toi plutôt."
+          : result.message || "Création du compte échouée.";
       setError(msg);
     }
     return result;

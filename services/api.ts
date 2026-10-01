@@ -31,7 +31,9 @@ export async function loadCachedSessionToken(): Promise<string | null> {
 
 // ── Domain types (mirror the afro-excellence-hub schema) ─────────────────────
 
-export type Inscription = {
+// The persistent account (users row). Identity, no edition — an account spans
+// all editions.
+export type AppUser = {
   id: string;
   first_name: string;
   last_name: string;
@@ -39,7 +41,6 @@ export type Inscription = {
   phone: string | null;
   city: string | null;
   heard_about_us: string | null;
-  edition: string;
   created_at?: string;
 };
 
@@ -47,7 +48,7 @@ export type MentorRole = "mentor" | "mentee";
 
 export type MentorshipProfile = {
   id: string;
-  inscription_id: string;
+  user_id: string;
   role: MentorRole;
   status: "active" | "declined";
   edition: string;
@@ -61,15 +62,15 @@ export type MentorshipProfile = {
   mentee_institution_name: string | null;
   mentee_field_of_study: string | null;
   mentee_level: string | null;
-  assigned_mentor_inscription_id: string | null;
+  assigned_mentor_user_id: string | null;
   // Free-text "À propos" both roles can fill.
   description: string | null;
 };
 
-// A flattened person card (mentorship_profile JOIN inscription) used for the
+// A flattened person card (mentorship_profile JOIN user) used for the
 // "mon binôme" contact views and the profile-detail screen.
 export type PersonContact = {
-  inscription_id: string;
+  user_id: string;
   profile_id: string;
   role: MentorRole;
   full_name: string;
@@ -95,7 +96,7 @@ export type PersonContact = {
 
 // Unified "me" payload returned by login / session / mentorship-upsert.
 export type MeResponse = {
-  user: Inscription;
+  user: AppUser;
   mentorship: MentorshipProfile | null;
   mentor: PersonContact | null; // assigned mentor (when user is a mentee)
   mentees: PersonContact[]; // assigned mentees (when user is a mentor)
@@ -184,7 +185,7 @@ export type LmsSubmitResult = {
 };
 
 export type LmsMenteeSummary = {
-  inscription_id: string;
+  user_id: string;
   full_name: string;
   email: string | null;
   completed_lessons: number;
@@ -297,7 +298,7 @@ export type RegisterInput = {
 };
 
 export type RegisterResult =
-  | { ok: true; inscription_id: string }
+  | { ok: true; user_id: string }
   | { ok: false; error: "already_registered" | "invalid" | "unknown"; message?: string };
 
 export type MentorshipInput =
@@ -362,7 +363,7 @@ export const API = {
   register: async (input: RegisterInput): Promise<RegisterResult> => {
     const { status, data } = await rawInvoke("app-register", input);
     if (status === 0) return { ok: false, error: "unknown", message: NETWORK_ERROR_MESSAGE };
-    if (status === 200 && data?.inscription_id) return { ok: true, inscription_id: data.inscription_id };
+    if (status === 200 && data?.user_id) return { ok: true, user_id: data.user_id };
     if (status === 409) return { ok: false, error: "already_registered" };
     if (status === 400) return { ok: false, error: "invalid", message: data?.error };
     return { ok: false, error: "unknown", message: data?.error };
@@ -375,7 +376,7 @@ export const API = {
   upsertMentorship: (input: MentorshipInput) =>
     invoke<MeResponse>("app-mentorship-upsert", input),
 
-  // Edit the current user's inscription details (name, phone, city). Email is not
+  // Edit the current user's account details (name, phone, city). Email is not
   // editable here (it's the login identifier). Returns the refreshed "me".
   updateProfile: (input: ProfileUpdateInput) =>
     invoke<MeResponse>("app-profile-update", input),
@@ -409,11 +410,11 @@ export const API = {
   // Mentor side.
   lmsMentees: () => invoke<{ mentees: LmsMenteeSummary[] }>("app-lms-mentees"),
 
-  lmsMenteeAnswers: (menteeInscriptionId: string) =>
-    invoke<{ mentee: { inscription_id: string; full_name: string }; answers: LmsMenteeAnswer[] }>(
+  lmsMenteeAnswers: (menteeUserId: string) =>
+    invoke<{ mentee: { user_id: string; full_name: string }; answers: LmsMenteeAnswer[] }>(
       "app-lms-mentee-answers",
       undefined,
-      { mentee_inscription_id: menteeInscriptionId },
+      { mentee_user_id: menteeUserId },
     ),
 
   lmsReviewAnswer: (answerId: string, reviewStatus: LmsReviewStatus, mentorComment?: string) =>

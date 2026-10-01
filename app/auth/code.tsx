@@ -87,7 +87,7 @@ export default function CodeScreen() {
         <Text className="text-2xl font-poppins-bold my-2 tracking-tight text-fg">Vérifie ton email</Text>
         <Text className="text-[15px] text-fg-muted leading-[22px] mb-9">
           {isSignup
-            ? "Pour finaliser ton inscription, saisis le code à 4 chiffres envoyé à"
+            ? "Pour finaliser la création de ton compte, saisis le code à 4 chiffres envoyé à"
             : "On a envoyé un code à 4 chiffres à"}{" "}
           <Text className="text-fg font-poppins-bold">{email}</Text>
         </Text>
